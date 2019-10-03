@@ -1,21 +1,24 @@
-from jinja2 import Template
+import os
 import json
+from jinja2 import Template
 
+DEBUG = True
+output_dir = "output_configs"
 
+with open('ConfTemplate.j2', 'r') as fp:
+    loadtemplate = fp.read()
 
-with open('ConfTemplate.txt','r') as fp:
-    loadtemplate=fp.read()
+with open('Clients.json', 'r') as json_file:
+    clients = json.load(json_file)
 
-with open('Clients.txt') as json_file:
-    clients=json.load(json_file)
+jinjatemplate = Template(loadtemplate)
 
-jinjatemplate=Template(loadtemplate)
-
-
-for key in clients:
-    hostname=key
-    ip=clients[key]
-    conf=jinjatemplate.render(hostname=hostname,ip=ip)
-myfile=open(key+'.conf','w') #to move in the for loop
-result=myfile.writelines(conf)#to move in the for loop
+os.makedirs(output_dir, exist_ok=True)
+for hostname, ip in clients.items():
+    conf = jinjatemplate.render(hostname=hostname, ip=ip)
+    with open(os.path.join(output_dir, hostname + '.conf'), 'w') as myfile:
+        result = myfile.writelines(conf)
+    # Todo: Remove Debug code
+    if DEBUG:
+        break
 
