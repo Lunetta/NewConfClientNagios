@@ -10,7 +10,7 @@ def generate_json(clients_file):
     clients = {}
     for line in lines:
         company, city, address = line.split("\t")
-        clients[company + "-" + city.replace(" - ", "_")] = address.rstrip()
+        clients[company + "-" + city.replace(" - ", "_").replace(' ', '_')] = address.rstrip()
 
     with open(clients_file.rstrip("txt") + "json", 'w') as f:
         json.dump(clients, f, indent=True)
